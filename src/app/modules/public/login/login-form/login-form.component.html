@@ -1,0 +1,33 @@
+<div class="login-box card">
+    
+    <div class="card-body"> 
+        <a style="cursor: pointer; text-decoration:none"  class="text-center db"><img src="assets/images/logo-icon.png" alt="Home" /><br/>
+            <!-- <img src="" alt="" /> -->
+            Sistema_Estudiantes
+        </a>
+        <div class="form-group m-t-40 mb-0">
+            <div class="col-xs-12">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label>Ingresa con:</label>
+                        <select  class="form-control custom-select" (change)="selectChamge($event)">
+                            <option *ngFor="let opt of optionsToLogin" [value]="opt.value">{{opt.title}}</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- email -->
+            <app-email-form (formValueEmail)="recibeValueFormEmail($event)" *ngIf="isCorreo"></app-email-form>
+        <!-- email -->
+
+        <!-- user -->
+            <app-user-form (formValueUser)="recibeformUserValue($event)" *ngIf="isUser"></app-user-form>
+        <!-- user -->
+
+        <!-- identity -->
+            <app-identity-form (formValueIdentity)="recibeformIdentityValue($event)" *ngIf="isIdentification"></app-identity-form>
+        <!-- identity -->
+    </div>
+</div>

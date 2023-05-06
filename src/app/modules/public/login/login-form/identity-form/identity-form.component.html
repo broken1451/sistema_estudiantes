@@ -1,0 +1,67 @@
+<form  [formGroup]="form" novalidate class="form-horizontal form-material"  (ngSubmit)="onSubmit()" >
+    <div class="form-group m-t-40">
+        <div class="col-xs-12">
+            <input  name="identification"  maxlength="13" formControlName="nro_identity" class="form-control" type="text" placeholder="Identification de usuario"
+            [value]="(form.controls['nro_identity'].value) | formatRut" (keyup)="blurRutInput()"
+            (keyup)="blurRutInput()"
+            (keypress)="caracteresRut($event)" (focus)="focusRutInput()" (blur)="blurRutInput()">
+            <div *ngIf="campoNoEsValido('nro_identity')" style="margin-top: 5px; color: red;">
+                La Identification es requerida
+            </div>
+            <!-- form.get(')?.errors?.validRut === false -->
+
+            <div *ngIf="form.get('nro_identity')?.errors && form.controls['nro_identity']?.errors?.['validRut'] === false" style="margin-top: 5px; color: red;">
+                Debe
+                ingresar una identificarion válida
+            </div>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <div class="col-xs-12">
+            <input  formControlName="password" name="password" class="form-control" type="password" required placeholder="Contraseña">
+            <div *ngIf="campoNoEsValido('password')" style="margin-top: 5px; color: red;">
+                El password es requerido
+            </div>
+        </div>
+    </div>
+
+<div class="form-group row">
+    <div class="col-md-12">
+        <div class="checkbox checkbox-primary pull-left p-t-0">
+            <input id="checkbox-signup" formControlName="remember"  name="recuerdame" type="checkbox" class="filled-in chk-col-light-blue">
+            <label for="checkbox-signup"> Recuerdame </label>
+        </div>
+        <!-- <a href="javascript:void(0)" id="to-recover" class="text-dark pull-right"><i class="fa fa-lock m-r-5"></i> Olvido contaseña</a>  -->
+    </div>
+</div>
+
+<div class="form-group text-center m-t-20">
+    <div class="col-xs-12">
+        <!-- [disabled]="enabledFormEmail || enabledFormIdentity || enabledFormUser"-->
+        <!-- [disabled]="form.invalid || !validRut" -->
+        <button  [disabled]="form.invalid || !validRut" 
+                   
+        class="btn btn-info btn-lg btn-block text-uppercase btn-rounded" type="submit">Ingresar</button>
+    </div>
+</div>
+<div class="row">
+    <div class="col-xs-12 col-sm-12 col-md-12 m-t-10 text-center">
+        <div class="social">
+            <!-- <a href="javascript:void(0)" class="btn  btn-facebook" data-toggle="tooltip" title="Acceder con Facebook">
+                <i aria-hidden="true" class="fa fa-facebook"></i> 
+            </a>  -->
+
+            <!-- <button type="button" href="" id="btnGoogle" class="btn btn-googleplus" data-toggle="tooltip" title="Acceder con Google">
+                 <i aria-hidden="true" class="fa fa-google-plus"></i>
+            </button>  -->
+        </div>
+    </div>
+</div>
+<div class="form-group m-b-0">
+    <div class="col-sm-12 text-center">
+        No tienes cuenta aun ? 
+        <a  class="text-primary m-l-5"><b>Registrarse</b></a>
+    </div>
+</div>
+</form>
