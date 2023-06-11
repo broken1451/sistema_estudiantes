@@ -21,8 +21,6 @@ export class BreadcumbsComponent implements OnInit {
       this.titulo = dataEvento.titulo;
       this.contenido = dataEvento.descrip;
       this.title.setTitle(this.titulo);
-      console.log('DataEvento: ', dataEvento);
-      console.log('this.titulo: ', this.titulo);
 
       // Metas Tags
       const metasTag: MetaDefinition = {
