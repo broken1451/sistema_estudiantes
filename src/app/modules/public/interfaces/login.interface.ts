@@ -15,6 +15,7 @@ export interface LoginResponse {
   user?: User;
   token?: string;
   menu?: Menu[];
+  ok?: boolean;
 }
 
 export interface Menu {

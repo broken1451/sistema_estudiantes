@@ -1,6 +1,7 @@
 import { DecimalPipe } from '@angular/common';
-import { AfterViewChecked, ChangeDetectorRef, Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { AfterViewChecked, ChangeDetectorRef, Component, EventEmitter, OnInit, Output, inject } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { AuthService } from '../../../service/auth.service';
 
 @Component({
   selector: 'app-identity-form',
@@ -11,6 +12,7 @@ export class IdentityFormComponent implements OnInit, AfterViewChecked {
 
   @Output() validFormIdentity = new EventEmitter<boolean>();
   @Output() formValueIdentity = new EventEmitter<any>();
+  private readonly authService = inject(AuthService);
 
   public form: FormGroup = this.fb.group({
     nro_identity: ['', [Validators.required,]],
@@ -30,6 +32,17 @@ export class IdentityFormComponent implements OnInit, AfterViewChecked {
 
   ngOnInit(): void {
   
+    if (localStorage.getItem('nro_identity')) {
+      this.form.patchValue({
+        nro_identity: localStorage.getItem('nro_identity')!,
+        remember: true
+      });
+    } else {
+      this.form.patchValue({
+        nro_identity: '',
+        remember: false
+      });
+    }
   }
 
   campoNoEsValido (campo: string): any {
@@ -104,6 +117,10 @@ export class IdentityFormComponent implements OnInit, AfterViewChecked {
       documentNumberInput = documentNumberInput.replace(/([.|-])*/g, '');
       this.form.controls['nro_identity'].setValue(documentNumberInput);
     }
+  }
+
+  goToRegister(){
+    this.authService.goToRegister();
   }
 
 

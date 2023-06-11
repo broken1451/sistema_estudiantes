@@ -1,5 +1,6 @@
-import { AfterViewChecked, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { AfterViewChecked, Component, EventEmitter, Input, OnInit, Output, inject } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { AuthService } from '../../../service/auth.service';
 
 @Component({
   selector: 'app-email-form',
@@ -10,7 +11,7 @@ export class EmailFormComponent implements OnInit, AfterViewChecked{
 
   @Output() validForm = new EventEmitter<boolean>();
   @Output() formValueEmail = new EventEmitter<any>();
-
+  private readonly authService = inject(AuthService);
   
   get formsValue() {
     return this.form.controls;
@@ -27,7 +28,17 @@ export class EmailFormComponent implements OnInit, AfterViewChecked{
   }
 
   ngOnInit(): void {
-
+    if (localStorage.getItem('email')) {
+      this.form.patchValue({
+        email: localStorage.getItem('email')!,
+        remember: true
+      });
+    } else {
+      this.form.patchValue({
+        email: '',
+        remember: false
+      });
+    }
   }
 
   onSubmit() {
@@ -40,6 +51,10 @@ export class EmailFormComponent implements OnInit, AfterViewChecked{
 
   campoNoEsValido (campo: string): any {
     return this.form?.controls[campo]?.errors && (this.form?.controls[campo]?.touched || this.form?.controls[campo]?.errors?.['pattern']?.requiredPattern); 
+  }
+
+  goToRegister(){
+    this.authService.goToRegister();
   }
 
 }

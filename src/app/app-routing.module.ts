@@ -1,11 +1,13 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { LoginComponent } from './modules/public/login/login.component';
+import { AuthGuard } from './modules/public/guards/auth.guard';
+
 
 const routes: Routes = [
   {
     path: '',
-    redirectTo: 'login',
+    redirectTo: 'private',
     pathMatch: 'full',
   },
   {
@@ -19,7 +21,14 @@ const routes: Routes = [
       import('./modules/public/register/register.module').then((m) => m.RegisterModule),
   },
   {
+    path: 'private',
+    loadChildren: () =>
+      import('./modules/private/private.module').then((m) => m.PrivateModule),
+      canActivate: [AuthGuard]
+  },
+  {
     path: '**',
+    // redirectTo: 'private',
     loadChildren: () =>
       import('./shared/page404/page404.module').then((m) => m.Page404Module),
   },

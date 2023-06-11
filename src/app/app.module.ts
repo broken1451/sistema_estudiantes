@@ -5,6 +5,9 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { registerLocaleData, TitleCasePipe } from '@angular/common';
 import localeCL from '@angular/common/locales/es-CL';
+import { SharedModule } from './shared/shared.module';
+import { AuthService } from './modules/public/service/auth.service';
+import { ServiceInterceptorsModule } from './shared/interceptor/interceptors.service.module';
 
 
 registerLocaleData(localeCL, 'es-CL');
@@ -16,9 +19,11 @@ registerLocaleData(localeCL, 'es-CL');
   imports: [
     BrowserModule,
     AppRoutingModule,
-    HttpClientModule
+    HttpClientModule,
+    ServiceInterceptorsModule
+    // SharedModule
   ],
-  providers: [],
+  providers: [AuthService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
