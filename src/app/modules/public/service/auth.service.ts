@@ -30,7 +30,6 @@ export class AuthService {
 
   private httpClient = inject(HttpClient);
   private router = inject(Router);
-
   public email!: string;
   public nro_identity!: string;
   public username!: string;
@@ -68,7 +67,6 @@ export class AuthService {
   }
 
   saveStorageCredentials(remember?: boolean, body?: LoginRequest) {
-    // console.log(remember, body);
     if (remember) {
       if (body?.email!) {
         localStorage.setItem('email', body?.email!);
@@ -78,15 +76,26 @@ export class AuthService {
         localStorage.setItem('username', body?.username!);
       }
     } else {
-      console.log(remember, body?.nro_identity != '');
       if (body?.nro_identity != '' && !remember) {
-        localStorage.removeItem('nro_identity');
+        if (body?.email != '') {
+          this.nro_identity = localStorage.getItem('nro_identity')!;
+        } else {
+          localStorage.removeItem('nro_identity');
+        }
       }
       if (body?.username != '' && !remember) {
-        localStorage.removeItem('username');
+        if (body?.email != '') {
+          this.username = localStorage.getItem('username')!;
+        } else {
+          localStorage.removeItem('username');
+        }
       }
       if (body?.email != '' && !remember) {
-        localStorage.removeItem('email');
+        if (body?.email != '') {
+          this.email = localStorage.getItem('email')!;
+        } else {
+          localStorage.removeItem('email');
+        }
       }
     }
   }

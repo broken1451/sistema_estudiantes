@@ -48,7 +48,7 @@ export class BreadcumbsComponent implements OnInit {
         }
       }),
       map((evento: ActivationEnd) => {
-        console.log('map despues del filter: ', evento);
+        // console.log('map despues del filter: ', evento);
         return evento.snapshot.data;
       })
     );

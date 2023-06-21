@@ -28,7 +28,7 @@ export class LoginFormComponent implements OnInit, AfterViewChecked {
   ngOnInit(): void {}
 
   async recibeValueFormEmail($event: any) {
-    const resp: LoginResponse | any = await this.authService
+    const resp = await this.authService
       .login($event)
       .catch((err) => {
         console.log({ err });
@@ -46,13 +46,13 @@ export class LoginFormComponent implements OnInit, AfterViewChecked {
         title: 'Espere por favor...',
         timer: 2000,
         didOpen: () => {
-          Swal.showLoading()
+          Swal.showLoading();
         }
       }).then((result) =>{
         if (result.dismiss === Swal.DismissReason.timer) {
           this.router.navigate(['/private/home']);
         }
-      })
+      });
   }
 
   async recibeformUserValue($event: any) {
@@ -69,7 +69,17 @@ export class LoginFormComponent implements OnInit, AfterViewChecked {
         allowOutsideClick: false,
       });
     });
-    console.log(resp);
+    await  Swal.fire({
+      title: 'Espere por favor...',
+      timer: 2000,
+      didOpen: () => {
+        Swal.showLoading();
+      }
+    }).then((result) =>{
+      if (result.dismiss === Swal.DismissReason.timer) {
+        this.router.navigate(['/private/home']);
+      }
+    });
   }
 
   async recibeformIdentityValue($event: any) {
@@ -86,7 +96,17 @@ export class LoginFormComponent implements OnInit, AfterViewChecked {
         allowOutsideClick: false,
       });
     });
-    console.log(resp);
+    await  Swal.fire({
+      title: 'Espere por favor...',
+      timer: 2000,
+      didOpen: () => {
+        Swal.showLoading();
+      }
+    }).then((result) =>{
+      if (result.dismiss === Swal.DismissReason.timer) {
+        this.router.navigate(['/private/home']);
+      }
+    });
   }
 
   selectChamge($event: any) {

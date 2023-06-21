@@ -10,6 +10,7 @@ import { ResponseUsers, User } from '../../public/interfaces/user.interfaces';
 export class HomeComponent implements OnInit {
   public desde: number = 0;
   public usersBack!: User[];
+  public user!: User;
 
   private readonly userService = inject(AuthService);
 
@@ -17,15 +18,13 @@ export class HomeComponent implements OnInit {
 
   ngOnInit(): void {
     this.getUser(String(this.desde));
+    this.user = this.userService.usuario;
   }
 
   async getUser(desde?: string) {
-
-    const resp  = await this.userService.getUsers(Number(desde)).catch(err => {
-
-    });
+    const resp  = await this.userService.getUsers(Number(desde)).catch(err => {});
+    console.log({resp});
     this.usersBack = resp?.users!;
-    console.log(this.usersBack );
   }
 
 
