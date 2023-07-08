@@ -1,5 +1,5 @@
 import { Component, OnInit, inject } from '@angular/core';
-import { User } from 'src/app/modules/public/interfaces/login.interface';
+import { Menu, User } from 'src/app/modules/public/interfaces/login.interface';
 import { AuthService } from 'src/app/modules/public/service/auth.service';
 
 @Component({
@@ -9,13 +9,20 @@ import { AuthService } from 'src/app/modules/public/service/auth.service';
 })
 export class SidebarComponent implements OnInit {
 
-  public usuario!: User;
-  private readonly userService = inject(AuthService);
+  public usuario!: any;
+  public readonly userService = inject(AuthService);
+  public menu!: Menu[];
 
   constructor() {}
 
   ngOnInit(): void {
     this.usuario = this.userService.usuario;
+    this.menu = JSON.parse(localStorage.getItem('menu')!);
   }
 
+
+  logout(){
+    this.userService.logout();
+    this.usuario = null;;
+  }
 }

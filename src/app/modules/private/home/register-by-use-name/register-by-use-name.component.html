@@ -1,0 +1,46 @@
+<form class="form-horizontal form-material" [formGroup]="form">
+    <div class="form-group">
+        <div class="col-md-12 m-b-20">
+            <input type="text" class="form-control" placeholder="Nombre" formControlName="name">
+            <span *ngIf="campoNoEsValido('name')" style="color: #d63c3c; font-size: 12px">Debes ingresar un nombre de usuario.</span>
+        </div>
+        <div class="col-md-12 m-b-20">
+            <input type="text" class="form-control" placeholder="Username" formControlName="username">
+            <span *ngIf="campoNoEsValido('username')" style="color: #d63c3c; font-size: 12px">Debes ingresar un username valido.</span>
+        </div>
+        <div class="col-md-12 m-b-20">
+            <input type="password" class="form-control" placeholder="Password" formControlName="password">
+            <span *ngIf="campoNoEsValido('password')" style="color: #d63c3c; font-size: 12px">Debes ingresar una contraseña válida, esta debe contener al menos una mayúscula y un número como mínimo.</span>
+        </div>
+        <div class="col-md-12 m-b-20">
+            <input type="password" class="form-control" placeholder="Repeat Password" formControlName="password2">
+            <span *ngIf="campoNoEsValido('password2')" style="color: #d63c3c; font-size: 12px">Debes ingresar una contraseña válida, esta debe contener al menos una mayúscula y un número como mínimo.</span>
+        </div>
+
+        <div class="col-12 mt-2 form-group" *ngIf="form?.errors?.['sonIguales'] && form?.get('password2')?.touched">
+            <span style="color: #d63c3c; font-size: 12px">Las contraseñas deben ser iguales.</span>
+        </div>
+
+        <div class="col-md-12 m-b-20">
+            <div class="demo-checkbox">
+                <input type="checkbox" id="md_checkbox_1" class="filled-in chk-col-light-blue" formControlName="check1" >
+                <label for="md_checkbox_1">ADMIN</label>
+                <input type="checkbox" id="md_checkbox_2" class="filled-in chk-col-light-blue" formControlName="check2">
+                <label for="md_checkbox_2">DOCENTE</label>
+                <input type="checkbox" id="md_checkbox_3" class="filled-in chk-col-light-blue" formControlName="check3">
+                <label for="md_checkbox_3">ESTUDIANTE</label>
+                <input type="checkbox" id="md_checkbox_4" class="filled-in chk-col-light-blue" formControlName="check4">
+                <label for="md_checkbox_4">PARENTS</label>
+
+            </div>
+        </div>
+        <!-- <div class="col-md-12 m-b-20">
+            <div class="fileupload btn btn-danger btn-rounded waves-effect waves-light"><span><i
+                        class="ion-upload m-r-5"></i>Upload Contact Image</span>
+                <input type="file" class="upload">
+            </div>
+        </div> -->
+    </div>
+    <button type="button" class="btn btn-info waves-effect" [disabled]="form.invalid" (click)="onSubmit()">Crear</button>
+    <button type="button" class="btn btn-default waves-effect" data-dismiss="modal">Cancel</button>
+</form>

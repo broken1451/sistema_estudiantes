@@ -30,28 +30,47 @@ export class LoginFormComponent implements OnInit, AfterViewChecked {
   async recibeValueFormEmail($event: any) {
     const resp = await this.authService
       .login($event)
-      .catch((err) => {
-        console.log({ err });
-        Swal.fire({
-          position: 'center',
-          icon: 'error',
-          title: err?.error?.message,
-          showConfirmButton: false,
+      .then(async () => {
+        await Swal.fire({
+          title: 'Espere por favor...',
           timer: 2000,
+          didOpen: () => {
+            console.log('here');
+            Swal.showLoading();
+          },
+        }).then((result) => {
+          console.log({ result });
+          if (result.dismiss === Swal.DismissReason.timer) {
+            this.router.navigate(['/private/home']);
+          }
+        });
+      })
+      .catch(async (err) => {
+        console.log({ err });
+        await Swal.fire({
+          position: 'center',
+          title: 'Espere por favor...',
+          timer: 2000,
+          didOpen: () => {
+            console.log('here');
+            Swal.showLoading();
+          },
           showCancelButton: false,
           allowOutsideClick: false,
+        }).then(async (result) => {
+          console.log(result);
+          if (result.dismiss === Swal.DismissReason.timer) {
+            await Swal.fire({
+              position: 'center',
+              icon: 'error',
+              title: err?.error?.message,
+              showConfirmButton: false,
+              timer: 2000,
+              showCancelButton: false,
+              allowOutsideClick: false,
+            })
+          }
         });
-      });
-     await  Swal.fire({
-        title: 'Espere por favor...',
-        timer: 2000,
-        didOpen: () => {
-          Swal.showLoading();
-        }
-      }).then((result) =>{
-        if (result.dismiss === Swal.DismissReason.timer) {
-          this.router.navigate(['/private/home']);
-        }
       });
   }
 
@@ -69,13 +88,13 @@ export class LoginFormComponent implements OnInit, AfterViewChecked {
         allowOutsideClick: false,
       });
     });
-    await  Swal.fire({
+    await Swal.fire({
       title: 'Espere por favor...',
       timer: 2000,
       didOpen: () => {
         Swal.showLoading();
-      }
-    }).then((result) =>{
+      },
+    }).then((result) => {
       if (result.dismiss === Swal.DismissReason.timer) {
         this.router.navigate(['/private/home']);
       }
@@ -96,13 +115,13 @@ export class LoginFormComponent implements OnInit, AfterViewChecked {
         allowOutsideClick: false,
       });
     });
-    await  Swal.fire({
+    await Swal.fire({
       title: 'Espere por favor...',
       timer: 2000,
       didOpen: () => {
         Swal.showLoading();
-      }
-    }).then((result) =>{
+      },
+    }).then((result) => {
       if (result.dismiss === Swal.DismissReason.timer) {
         this.router.navigate(['/private/home']);
       }

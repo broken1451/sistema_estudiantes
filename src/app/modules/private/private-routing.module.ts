@@ -16,6 +16,12 @@ const routes: Routes = [
         data: {titulo: 'Home', descrip: 'Esto es la pagina principal'} 
       },
       {
+        path: 'perfil',
+        loadChildren: () =>
+        import('./profile/profile.module').then((m) => m.ProfileModule),
+        data: {titulo: 'Profile', descrip: 'Pagina de perfil'} 
+      },
+      {
         path: '**',
         redirectTo: 'home',
         // loadChildren: () =>

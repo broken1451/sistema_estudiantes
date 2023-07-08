@@ -1,9 +1,10 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable, take } from 'rxjs';
 import {
   LoginRequest,
   LoginResponse,
+  Menu,
   OptLogin,
 } from '../interfaces/login.interface';
 import { environment } from 'src/environments/environment';
@@ -35,12 +36,13 @@ export class AuthService {
   public username!: string;
   public token!: string;
   public usuario!: User | any;
-  public menu: any;
+  public menu: any[]  = [];
+  public userToUpdate!: User;
 
   constructor() {
-    this.cargarStorageCredentials();
     this.cargarStorage();
-    this.cargarStorageUser();
+    this.cargarStorageCredentials();
+    // this.cargarStorageUser();
   }
 
   login(body: LoginRequest): Promise<LoginResponse> {
@@ -52,7 +54,7 @@ export class AuthService {
         .pipe(take(1))
         .subscribe({
           next: (res) => {
-            this.saveStorage(res.token!)
+            // this.saveStorage(res.token)
             this.guardarStorageUser(res.user?._id!, res.token!,res?.user!, res?.menu)
             resolve(res);
           },
@@ -135,14 +137,34 @@ export class AuthService {
             reject(err);
           },
           complete: () => {
-            console.info('Success login.');
+            console.info('Success create.');
           },
         });
     });
   }
 
-  saveStorage(token: string) {
-    sessionStorage.setItem('token', token);
+  deleteUser(id: string): Promise<any> {
+    return new Promise((resolve, reject) => {
+      const params: HttpParams = new HttpParams().set('id',id );
+      return this.httpClient
+        .delete<any>(`${environment.baseUrl}/auth/${id}`)
+        .pipe(take(1))
+        .subscribe({
+          next: (res) => {
+            resolve(res);
+          },
+          error: (err) => {
+            reject(err);
+          },
+          complete: () => {
+            console.info('Success create.');
+          },
+        });
+    });
+  }
+
+  saveStorage(token?: string) {
+    sessionStorage.setItem('token', token!);
   }
 
   isLogged() {
@@ -156,12 +178,14 @@ export class AuthService {
   }
 
   cargarStorage() {
-    if (localStorage.getItem('token') || localStorage.getItem('usuario')) {
-      // this.usuario = JSON.parse(localStorage.getItem('usuario'));
-      this.token = sessionStorage.getItem('token')!;
-      // this.menu = JSON.parse(localStorage.getItem('menu'));
+    if (sessionStorage.getItem('token')) {
+      console.log('hete');
+      this.usuario = JSON.parse(localStorage.getItem('usuario')!);
+      this.menu = JSON.parse(localStorage.getItem('menu')!);
     } else {
-      this.token = '';;
+      this.usuario = null;
+      this.menu = [];
+      this.token = '';
     }
   }
 
@@ -188,20 +212,39 @@ export class AuthService {
 
   guardarStorageUser(id: string, token: string, usuario: User, menu: any ) {
     localStorage.setItem('id', id);
-    // localStorage.setItem('token', token);
+    sessionStorage.setItem('token', token);
     localStorage.setItem('usuario', JSON.stringify(usuario));
     localStorage.setItem('menu', JSON.stringify(menu));
+    localStorage.setItem('userLoged', JSON.stringify(usuario));
     this.usuario = usuario;
     this.menu = menu;
+    // console.log({menuService: this.menu});
   }
 
-  cargarStorageUser() {
-    if (sessionStorage.getItem('token') || localStorage.getItem('usuario')) {
-      this.usuario = JSON.parse(localStorage.getItem('usuario')!);
-      this.menu = JSON.parse(localStorage.getItem('menu')!);
-    } else {
-      this.usuario = null;
-      this.menu = [];
-    }
+  // cargarStorageUser() {
+  //   if (sessionStorage.getItem('token')) {
+  //     console.log('hete');
+  //     this.usuario = JSON.parse(localStorage.getItem('usuario')!);
+  //     this.menu = JSON.parse(localStorage.getItem('menu')!);
+  //   } else {
+  //     this.usuario = null;
+  //     this.menu = [];
+  //   }
+  // }
+
+  logout() {
+    // this.usuario = null;
+    this.token = '';
+    // this.menu = [];
+    sessionStorage.removeItem('token');
+    localStorage.removeItem('usuario');
+    localStorage.removeItem('menu');
+    localStorage.removeItem('userLoged');
+    // sessionStorage.clear();
+    this.router.navigate(['/login']);
+  }
+
+  cargarMenu() {
+    this.menu = this.menu;
   }
 }

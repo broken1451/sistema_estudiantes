@@ -15,11 +15,11 @@ const routes: Routes = [
     loadChildren: () =>
       import('./modules/public/login/login.module').then((m) => m.LoginModule),
   },
-  {
-    path: 'register',
-    loadChildren: () =>
-      import('./modules/public/register/register.module').then((m) => m.RegisterModule),
-  },
+  // {
+  //   path: 'register',
+  //   loadChildren: () =>
+  //     import('./modules/public/register/register.module').then((m) => m.RegisterModule),
+  // },
   {
     path: 'private',
     loadChildren: () =>

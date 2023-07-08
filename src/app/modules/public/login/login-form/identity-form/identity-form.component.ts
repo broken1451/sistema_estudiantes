@@ -10,7 +10,6 @@ import { AuthService } from '../../../service/auth.service';
 })
 export class IdentityFormComponent implements OnInit, AfterViewChecked {
 
-  @Output() validFormIdentity = new EventEmitter<boolean>();
   @Output() formValueIdentity = new EventEmitter<any>();
   private readonly authService = inject(AuthService);
 

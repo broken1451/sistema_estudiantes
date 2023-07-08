@@ -14,6 +14,17 @@ export interface User {
     roles:        string[];
     isActive:     boolean;
     retry:        number;
-    created:      Date;
+    created:      Date | string;
     __v:          number;
+}
+
+export interface Menu {
+    titulo:  string;
+    icono:   string;
+    submenu: Submenu[];
+}
+
+export interface Submenu {
+    titulo: string;
+    url:    string;
 }

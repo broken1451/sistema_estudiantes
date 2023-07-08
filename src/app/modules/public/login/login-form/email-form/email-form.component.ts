@@ -16,6 +16,7 @@ export class EmailFormComponent implements OnInit, AfterViewChecked{
   get formsValue() {
     return this.form.controls;
   }
+  
   public form: FormGroup = this.fb.group({
     email: ['', [ Validators.pattern(/^([a-zA-Z0-9_\.-]+)@([a-zA-Z0-9_\.-]+)\.([a-zA-Z]{2,5})$/)]],
     password:['', [Validators.required, Validators.pattern(/(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z]).+$/)]],

@@ -9,7 +9,6 @@ import { SharedModule } from './shared/shared.module';
 import { AuthService } from './modules/public/service/auth.service';
 import { ServiceInterceptorsModule } from './shared/interceptor/interceptors.service.module';
 
-
 registerLocaleData(localeCL, 'es-CL');
 
 @NgModule({
