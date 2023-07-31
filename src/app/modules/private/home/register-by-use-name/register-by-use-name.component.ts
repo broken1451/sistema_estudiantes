@@ -33,6 +33,7 @@ export class RegisterByUseNameComponent {
   }
 
   @Output() formValueUsername = new EventEmitter<RegisterUser>();
+  @Output() setDefaultEmail = new EventEmitter<boolean>();
 
 
   campoNoEsValido(campo: string): any {
@@ -117,11 +118,6 @@ export class RegisterByUseNameComponent {
     $('#addcontact').modal('hide');
   }
 
-
-
-
-
-
   sonIguales(campo1: string, campo2: string): any {
     return ((group: FormGroup) => {
       const pass1 = group.controls[campo1].value;
@@ -135,5 +131,11 @@ export class RegisterByUseNameComponent {
         sonIguales: true
       };
     });
+  }
+
+  cancel(){
+    this.form.reset()
+    $('#addcontact').modal('hide');
+    this.setDefaultEmail.emit(false)
   }
 }

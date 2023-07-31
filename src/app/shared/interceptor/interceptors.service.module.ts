@@ -4,6 +4,7 @@ import { HttpEvent, HttpHandler, HttpInterceptor, HttpRequest, HTTP_INTERCEPTORS
 import { Observable, throwError } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { Router } from '@angular/router';
+import Swal from 'sweetalert2';
 
 
 
@@ -12,7 +13,7 @@ export class ServiceInterceptor implements HttpInterceptor {
 
    constructor (private router: Router) {}
 
-  intercept (request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<any>> {
+  intercept (request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<any>> | any {
 
     let headers = request.headers;
     headers = headers.append('Access-Control-Allow-Origin', '*');
@@ -40,14 +41,14 @@ export class ServiceInterceptor implements HttpInterceptor {
         map(event => {
           return event;
         }),
-        catchError(error => {
-          return throwError(error);
+        catchError(err => {
+          return throwError(() => err);
         })
       );
     }
     
 
-    // headers = headers?.append('Authorization', `Bearer ${this.globalService?.token}`);
+    headers = headers?.append('Authorization', `Bearer ${sessionStorage.getItem('token')!}`);
     request = request?.clone({
       headers
     });
@@ -56,14 +57,25 @@ export class ServiceInterceptor implements HttpInterceptor {
       map(event => {
         return event;
       }),
-      catchError(error => {
-        console.log({ error });
-        if (error?.status === 401 || error?.status === 403) {
-        //   this.globalService.token = '';
+      catchError( async  error => {
+        if (error?.status === 403) {
+          await Swal.fire({
+            title: 'El usuario logueado no esta autorizado.',
+            timer: 2000,
+            icon: 'error',
+            showConfirmButton: false
+          });
+        }
+
+        if (error?.status === 401) {
           sessionStorage?.clear();
+          localStorage?.removeItem('id');
+          localStorage?.removeItem('usuario');
+          localStorage?.removeItem('menu');
+          localStorage?.removeItem('userLoged');
           this.router.navigate(['/login']).then();
         }
-        return throwError(error);
+        return throwError(() => error);
       })
     );
   }

@@ -14,6 +14,7 @@ declare var $: any
 export class RegisterByIdentityComponent {
 
   @Output() formValueIdentity = new EventEmitter<RegisterUser>();
+  @Output() setDefaultEmail = new EventEmitter<boolean>();
   private readonly fb = inject(FormBuilder);
   private readonly decimalPipe = inject(DecimalPipe);
   public validRut = false;
@@ -195,5 +196,11 @@ export class RegisterByIdentityComponent {
     this.formValueIdentity.emit(newUser);
     this.form.reset();
     $('#addcontact').modal('hide');
+  }
+
+  cancel(){
+    this.form.reset()
+    $('#addcontact').modal('hide');
+    this.setDefaultEmail.emit(false)
   }
 }

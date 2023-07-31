@@ -3,6 +3,10 @@
         <div class="card">
             <div class="card-body">
                 <h4 class="card-title">User list</h4>
+                <form class="app-search">
+                    <input #termino type="text" name="" (keyup)="buscar(termino.value)"  class="form-control" placeholder="Search"> 
+                 </form>
+
                 <div class="text-right">
                     <ul class="pagination">
                         <!-- <li class="page-item" style="cursor: pointer;"><a class="page-link" (click)="prev()">Anteriores</a></li> -->
@@ -27,6 +31,7 @@
                                 <th>Active</th>
                                 <th>Delete</th>
                                 <th>Updated</th>
+                                <th>Details</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -40,21 +45,25 @@
                                 </td>
                                 <td *ngIf="user?.isActive">{{user?.email}}</td>
                                 <td *ngIf="user?.isActive">{{user.nro_identity}}</td>
-                                <td *ngIf="user?.isActive"><span class="label label-danger">{{user?.roles}}</span> </td>
+                                <td *ngIf="user?.isActive">
+                                    <span class="label label-danger">
+                                        {{ (user.roles.length == 0) ? 'SIN ROLES': user.roles  }}
+
+                                    </span> </td>
                                 <td *ngIf="user?.isActive">{{user?.username}}</td>
                                 <td *ngIf="user?.isActive">{{user?.created}}</td>
                                 <td *ngIf="user?.isActive">{{ (user?.isActive) ? 'Activo' : 'No Activo' }}</td>
-                                <td *ngIf="user?.isActive">
+                                <td *ngIf="user?.isActive" style="text-align: center;">
                                     <button (click)="delete(user)" type="button"
                                         class="btn btn-sm btn-icon btn-pure btn-outline delete-row-btn"
                                         data-toggle="tooltip" data-original-title="Delete">
-                                        <i class="fa fa-trash-o" aria-hidden="true"></i>
+                                        <i class="fa fa-trash-o fa-lg" aria-hidden="true"></i>
                                     </button>
                                 </td>
 
 
-                                 <td *ngIf="user?.isActive" data-toggle="modal"
-                                 data-target="#updateUser" (click)="updated(user)" style="cursor: pointer;" >
+                                 <td  *ngIf="user?.isActive" data-toggle="modal" 
+                                 data-target="#updateUser" (click)="updated(user)" style="cursor: pointer; text-align: center !important" >
                                     <i class="fa fa-edit" aria-hidden="true"></i>
                                     <!-- <button type="button" class="btn btn-info btn-rounded" data-toggle="modal"
                                         data-target="#updateUser">
@@ -68,6 +77,9 @@
                                         <i class="fa fa-edit" aria-hidden="true"></i>
                                     </button>
                                 </td> -->
+                                <td style="text-align: center;" (click)="detail(user)" data-toggle="modal"  data-target="#detailsUser" style="cursor: pointer;" >
+                                    <i class="fa fa-info" aria-hidden="true"></i>
+                                </td>
                             </tr>
                             <!-- <tr>
                                 <td>2</td>
@@ -283,8 +295,9 @@
                                                         <div class="col-md-12">
                                                             <div class="form-group">
                                                                 <label>Registrate con:</label>
-                                                                <select class="form-control custom-select"
+                                                                <select [(ngModel)] = "selectedUser"   class="form-control custom-select"
                                                                     (change)="selectChamge($event)">
+                                                                    <option [ngValue]="null" selected disabled>Select User</option>
                                                                     <option *ngFor="let opt of optionsToLogin"
                                                                         [value]="opt.value">{{opt.title}}</option>
                                                                 </select>
@@ -293,11 +306,11 @@
                                                     </div>
                                                 </div>
 
-                                                <app-register-by-email (formValueEmail)="recibeValueForm($event)"
+                                                <app-register-by-email (setDefaultEmail)="setDefault($event)" (formValueEmail)="recibeValueForm($event)"
                                                     *ngIf="isCorreo"></app-register-by-email>
-                                                <app-register-by-use-name *ngIf="isUser"
+                                                <app-register-by-use-name (setDefaultEmail)="setDefault($event)" *ngIf="isUser"
                                                     (formValueUsername)="recibeValueForm($event)"></app-register-by-use-name>
-                                                <app-register-by-identity *ngIf="isIdentification"
+                                                <app-register-by-identity (setDefaultEmail)="setDefault($event)" *ngIf="isIdentification"
                                                     (formValueIdentity)="recibeValueForm($event)"></app-register-by-identity>
                                             </div>
                                             <!-- <div class="modal-footer">
@@ -311,12 +324,6 @@
 
 
                             <tr>
-
-                                <!-- <td colspan="2" style="border-top:none" *ngIf="user?.roles?.includes('ADMIN')">
-                                    <button type="button" class="btn btn-info btn-rounded" data-toggle="modal"
-                                        data-target="#updateUser">Actualizar Usuario</button>
-                                </td> -->
-
                                 <div id="updateUser" class="modal fade in" tabindex="-1" role="dialog"
                                     aria-labelledby="myModalLabel" aria-hidden="true" data-backdrop="static"
                                     data-keyboard="false">
@@ -328,24 +335,27 @@
                                                         <div class="col-md-12">
                                                             <div class="form-group">
                                                                 <label>Actualizar Usuario:</label>
-                                                                <select class="form-control custom-select"
+                                                                <select [(ngModel)] = "selectedUser"  class="form-control custom-select"
                                                                     (change)="selectChamge($event)">
-                                                                    <option *ngFor="let opt of optionsToLogin"
+                                                                    <option [ngValue]="null" selected disabled>Select User</option>
+                                                                    <option *ngFor="let opt of optionsToLoginDefault"
                                                                         [value]="opt.value">{{opt.title}}</option>
                                                                 </select>
+                                                                <!-- <select *ngIf="isUser && !isCorreo && !isIdentification" class="form-control custom-select"
+                                                                (change)="selectChamge($event)">
+                                                                <option *ngFor="let opt of optionsToLogin"
+                                                                    [value]="opt.value">{{opt.title}} - {{isCorreo}} -- {{isUser}}</option>
+                                                            </select> -->
                                                             </div>
                                                         </div>
                                                     </div>
                                                 </div>
 
+                                                <app-update-by-email (setDefaultEmail)="setDefault($event)" [user]="userSend" (formValueEmail)="recibeUpdate($event)" *ngIf="isCorreo"></app-update-by-email>
 
-                                                <!-- here -->
-                                                <app-update-by-email *ngIf="isCorreo"></app-update-by-email>
+                                                <app-update-by-username (setDefaultEmail)="setDefault($event)" (formValueUsername)="recibeUpdate($event)" [user]="userSend" *ngIf="isUser"></app-update-by-username>
 
-                                                <app-update-by-username *ngIf="isUser"></app-update-by-username>
-
-                                                <app-update-by-identity *ngIf="isIdentification"></app-update-by-identity>
-
+                                                <app-update-by-identity (setDefaultEmailDefault)="setDefault($event)" *ngIf="isIdentification" (formValueNroIdentity)="recibeUpdate($event)" [user]="userSend"></app-update-by-identity>
 
                                             </div>
 
@@ -353,6 +363,48 @@
                                     </div>
                                 </div>
                             </tr>
+
+
+
+                            <!-- details -->
+                            <tr>
+                                <div id="detailsUser" class="modal fade in" tabindex="-1" role="dialog"
+                                    aria-labelledby="myModalLabel" aria-hidden="true"
+                                    data-keyboard="false">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-body" style="margin-top: -9%">
+                                                <div class="form-group m-t-40 mb-0">
+                                                    <div class="col-xs-12">
+                                                        <div class="col-md-12">
+                                                            <div class="form-group">
+                                                                <label>Detalles Usuario:</label>
+                                                                <!-- <select [(ngModel)] = "selectedUser"  class="form-control custom-select"
+                                                                    (change)="selectChamge($event)">
+                                                                    <option [ngValue]="null" selected disabled>Select User</option>
+                                                                    <option *ngFor="let opt of optionsToLoginDefault"
+                                                                        [value]="opt.value">{{opt.title}} - {{isCorreo}} -- {{isUser}} -- {{isIdentification}}</option>
+                                                                </select> -->
+                                                                <!-- <select *ngIf="isUser && !isCorreo && !isIdentification" class="form-control custom-select"
+                                                                (change)="selectChamge($event)">
+                                                                <option *ngFor="let opt of optionsToLogin"
+                                                                    [value]="opt.value">{{opt.title}} - {{isCorreo}} -- {{isUser}}</option>
+                                                            </select> -->
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                    <app-details-user [user]="userDetail"></app-details-user>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </tr>
+
+
+
 
 
                         </tfoot>

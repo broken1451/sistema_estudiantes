@@ -14,6 +14,7 @@ export class RegisterByEmailComponent {
 
   @Output() validForm = new EventEmitter<boolean>();
   @Output() formValueEmail = new EventEmitter<RegisterUser>();
+  @Output() setDefaultEmail = new EventEmitter<boolean>();
   private readonly authService = inject(AuthService);
   private readonly fb = inject(FormBuilder);
 
@@ -132,6 +133,12 @@ export class RegisterByEmailComponent {
         sonIguales: true
       };
     });
+  }
+
+  cancel(){
+    this.form.reset()
+    $('#addcontact').modal('hide');
+    this.setDefaultEmail.emit(false)
   }
 
 }

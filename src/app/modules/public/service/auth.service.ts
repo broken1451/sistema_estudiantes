@@ -9,7 +9,7 @@ import {
 } from '../interfaces/login.interface';
 import { environment } from 'src/environments/environment';
 import { Router } from '@angular/router';
-import { RegisterUser } from '../interfaces/register.user..interface';
+import { RegisterUser, UpdatedUser } from '../interfaces/register.user..interface';
 import { ResponseUsers, User } from '../interfaces/user.interfaces';
 
 @Injectable()
@@ -38,6 +38,7 @@ export class AuthService {
   public usuario!: User | any;
   public menu: any[]  = [];
   public userToUpdate!: User;
+  public termino: string = '';
 
   constructor() {
     this.cargarStorage();
@@ -143,6 +144,29 @@ export class AuthService {
     });
   }
 
+  updated(body: any, id: string): Promise<any> {
+    return new Promise((resolve, reject) => {
+      delete body.id
+      const {email,name,nro_identity,username,roles } = body.updatedUser
+      console.log({body});
+      console.log({id});
+      return this.httpClient
+        .patch<any>(`${environment.baseUrl}/auth/${id}`, {email,name,nro_identity,username,roles })
+        .pipe(take(1))
+        .subscribe({
+          next: (res) => {
+            resolve(res);
+          },
+          error: (err) => {
+            reject(err);
+          },
+          complete: () => {
+            console.info('Success updated.');
+          },
+        });
+    });
+  }
+
   deleteUser(id: string): Promise<any> {
     return new Promise((resolve, reject) => {
       const params: HttpParams = new HttpParams().set('id',id );
@@ -209,6 +233,26 @@ export class AuthService {
     });
   }
 
+
+  getUsersByTerm(termino: string, desde: number = 0): Promise<ResponseUsers>{
+    return new Promise((resolve, reject) => {
+      const params = new HttpParams().set('desde', String((desde)))
+      return this.httpClient
+        .get<ResponseUsers>(`${environment.baseUrl}/auth/findUserByTerm/${termino}`, { params })
+        .pipe(take(1))
+        .subscribe({
+          next: (res) => {
+            resolve(res);
+          },
+          error: (err) => {
+            reject(err);
+          },
+          complete: () => {
+            console.info('Users success.');
+          },
+        });
+    });
+  }
 
   guardarStorageUser(id: string, token: string, usuario: User, menu: any ) {
     localStorage.setItem('id', id);

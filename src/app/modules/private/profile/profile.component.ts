@@ -1,9 +1,10 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, DoCheck, OnChanges, OnInit, SimpleChanges, inject } from '@angular/core';
 import { User } from '../../public/interfaces/login.interface';
 import { AuthService } from '../../public/service/auth.service';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { UpdatedUser } from '../../public/interfaces/register.user..interface';
 import { DecimalPipe } from '@angular/common';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-profile',
@@ -23,7 +24,7 @@ export class ProfileComponent implements OnInit {
     name: ['', [Validators.required]],
     email: ['', [Validators.pattern(/^([a-zA-Z0-9_\.-]+)@([a-zA-Z0-9_\.-]+)\.([a-zA-Z]{2,5})$/)]],
     username: ['', [Validators.pattern(/^[a-zA-Z0-9]+$/)]],
-    nro_identity: ['', [Validators.required,]],
+    nro_identity: ['', []],
     check1: [false, []],
     check2: [false, []],
     check3: [false, []],
@@ -38,10 +39,13 @@ export class ProfileComponent implements OnInit {
 
   ngOnInit(): void {
     this.usuario = JSON.parse(localStorage.getItem('userLoged')!);
-    console.log(this.usuario);
+    this.form.controls['name'].setValue(this.usuario.name);
+    this.form.controls['username'].setValue(this.usuario.username);
+    this.form.controls['nro_identity'].setValue(this.usuario.nro_identity);
+    this.form.controls['email'].setValue(this.usuario.email);
   }
 
-  onSubmit() {
+  async onSubmit() {
     let roles: string[] = [];
     if (this.formsValue['check1'].value && this.formsValue['check2'].value && this.formsValue['check3'].value && this.formsValue['check4'].value) {
       this.formsValue['check1'].setValue('ADMIN');
@@ -100,7 +104,7 @@ export class ProfileComponent implements OnInit {
       roles.push(this.formsValue['check3'].value);
     } else if (!this.formsValue['check1'].value && !this.formsValue['check2'].value && this.formsValue['check3'].value && this.formsValue['check4'].value) {
       this.formsValue['check3'].setValue('ESTUDIANTE');
-      this.formsValue['check4'].setValue('PARENTS')
+      this.formsValue['check4'].setValue('PARENTS');
       roles.push(this.formsValue['check3'].value, this.formsValue['check4'].value);
     } else if (!this.formsValue['check1'].value && !this.formsValue['check2'].value && !this.formsValue['check3'].value && this.formsValue['check4'].value) {
       this.formsValue['check4'].setValue('PARENTS');
@@ -125,8 +129,29 @@ export class ProfileComponent implements OnInit {
       delete updatedUser.nro_identity;
     }
 
-    console.log(updatedUser);
-    // TODO  consumir el servicio de actualizar usuario
+    const res = await this.userService.updated({updatedUser}, this.usuario._id).then(async(res) => {
+      await Swal.fire({
+        title: 'Espere por favor...',
+        timer: 2000,
+        didOpen: () => {
+          Swal.showLoading();
+        },
+      }).then((result) => {
+        if (result.dismiss === Swal.DismissReason.timer) {
+          localStorage.setItem('userLoged', JSON.stringify(res))
+          this.usuario = JSON.parse(localStorage.getItem('userLoged')!);
+          this.form.patchValue({
+            check1: false,
+            check2: false,
+            check3: false,
+            check4: false,
+          });
+        }
+      });
+
+    }).catch((err) => {
+      console.log({err});
+    });
   }
 
   campoNoEsValido(campo: string): any {

@@ -22,6 +22,12 @@ const routes: Routes = [
         data: {titulo: 'Profile', descrip: 'Pagina de perfil'} 
       },
       {
+        path: 'docentes',
+        loadChildren: () =>
+        import('./docente/docente.module').then((m) => m.DocenteModule),
+        data: {titulo: 'Docente', descrip: 'Pagina de docente'} 
+      },
+      {
         path: '**',
         redirectTo: 'home',
         // loadChildren: () =>

@@ -15,6 +15,7 @@ export interface User {
     isActive:     boolean;
     retry:        number;
     created:      Date | string;
+    updated?:  Date | string;
     __v:          number;
 }
 

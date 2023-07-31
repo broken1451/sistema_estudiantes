@@ -23,14 +23,19 @@
 
         <div class="col-md-12 m-b-20">
             <div class="demo-checkbox">
-                <input type="checkbox" id="md_checkbox_1" class="filled-in chk-col-light-blue" formControlName="check1" >
-                <label for="md_checkbox_1">ADMIN</label>
-                <input type="checkbox" id="md_checkbox_2" class="filled-in chk-col-light-blue" formControlName="check2">
-                <label for="md_checkbox_2">DOCENTE</label>
-                <input type="checkbox" id="md_checkbox_3" class="filled-in chk-col-light-blue" formControlName="check3">
-                <label for="md_checkbox_3">ESTUDIANTE</label>
-                <input type="checkbox" id="md_checkbox_4" class="filled-in chk-col-light-blue" formControlName="check4">
-                <label for="md_checkbox_4">PARENTS</label>
+
+                <input type="checkbox" id="md_checkbox_28" class="filled-in chk-col-cyan" formControlName="check1">
+                <label for="md_checkbox_28">ADMIN</label>
+
+
+                <input type="checkbox" id="md_checkbox_29" class="filled-in chk-col-cyan" formControlName="check2">
+                <label for="md_checkbox_29">DOCENTE</label>
+
+                <input type="checkbox" id="md_checkbox_30" class="filled-in chk-col-cyan" formControlName="check3">
+                <label for="md_checkbox_30">ESTUDIANTE</label>
+
+                <input type="checkbox" id="md_checkbox_31" class="filled-in chk-col-cyan" formControlName="check4">
+                <label for="md_checkbox_31">PARENTS</label>
 
             </div>
         </div>
@@ -41,6 +46,6 @@
             </div>
         </div> -->
     </div>
-    <button type="button" class="btn btn-info waves-effect" [disabled]="form.invalid" (click)="onSubmit()" >Crear</button>
-    <button type="button" class="btn btn-default waves-effect" data-dismiss="modal">Cancel</button>
+    <button type="button" class="btn btn-info waves-effect" [disabled]="form.invalid" (click)="onSubmit()">Actualizar</button>
+    <button type="button" class="btn btn-default waves-effect" (click)="cancel()">Cancel</button>
 </form>
