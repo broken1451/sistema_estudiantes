@@ -13,6 +13,7 @@ import { UpdateByEmailComponent } from './update-by-email/update-by-email.compon
 import { UpdateByUsernameComponent } from './update-by-username/update-by-username.component';
 import { UpdateByIdentityComponent } from './update-by-identity/update-by-identity.component';
 import { DetailsUserComponent } from './details-user/details-user.component';
+import { PipeModule } from 'src/app/shared/pipes/pipes.module';
 
 
 @NgModule({
@@ -31,7 +32,8 @@ import { DetailsUserComponent } from './details-user/details-user.component';
     HomeRoutingModule,
     ReactiveFormsModule,
     FormsModule,
-    SharedModule
+    SharedModule,
+    PipeModule
   ],
   exports: [HomeComponent],
   providers: [AuthService, DecimalPipe]

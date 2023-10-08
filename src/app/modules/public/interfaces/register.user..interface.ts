@@ -11,6 +11,7 @@ export interface RegisterUser {
 
 export interface UpdatedUser {
     email?:        string;
+    img?:        string;
     username?:     string;
     name?:     string;
     nro_identity?: string;

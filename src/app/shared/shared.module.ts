@@ -7,17 +7,17 @@ import { BreadcumbsComponent } from './breadcumbs/breadcumbs.component';
 import { HeaderComponent } from './header/header.component';
 import { SidebarComponent } from './sidebar/sidebar.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { PipeModule } from './pipes/pipes.module';
+
 
 @NgModule({
   declarations: [
-    FormatRutPipe,
     BreadcumbsComponent,
     HeaderComponent,
     SidebarComponent,
   ],
-  imports: [CommonModule, SharedRoutingModule, ReactiveFormsModule, FormsModule],
+  imports: [CommonModule, SharedRoutingModule, ReactiveFormsModule, FormsModule, PipeModule],
   exports: [
-    FormatRutPipe,
     BreadcumbsComponent,
     HeaderComponent,
     SidebarComponent,

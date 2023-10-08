@@ -7,7 +7,7 @@
                 <li class="user-profile">
                     <a class="has-arrow waves-effect waves-dark" aria-expanded="false">
                         <!-- <img src="../assets/images/users/profile.png" alt="user" /> -->
-                        <img *ngIf="usuario?.img" [src]="usuario?.img" alt="user" />
+                        <img *ngIf="usuario?.img" [src]="usuario?.img | imagen" alt="user" />
                         <span class="hide-menu">{{usuario?.name!}} </span>
                     </a>
                     <ul aria-expanded="false" class="collapse">

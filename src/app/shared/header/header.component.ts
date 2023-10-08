@@ -1,4 +1,5 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, DoCheck, OnInit, inject } from '@angular/core';
+import { Subscription } from 'rxjs';
 import { User } from 'src/app/modules/public/interfaces/login.interface';
 import { AuthService } from 'src/app/modules/public/service/auth.service';
 
@@ -7,18 +8,26 @@ import { AuthService } from 'src/app/modules/public/service/auth.service';
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.scss']
 })
-export class HeaderComponent implements OnInit {
+export class HeaderComponent implements OnInit, DoCheck {
 
   public usuario!: any;
   public termino: string = '';
   private readonly userService = inject(AuthService);
+  public user$: Subscription;
 
   constructor() {
     localStorage.removeItem('termino')
   }
 
+  ngDoCheck(): void {
+    this.usuario =  JSON.parse(localStorage.getItem('userLoged')!)
+  }
+
   ngOnInit(): void {
-    this.usuario = this.userService.usuario;
+    this.usuario = JSON.parse(localStorage.getItem('userLoged')!)
+    // this.user$ = this.userService.itemsObservable$.subscribe((data) => {
+    //   this.usuario = data;
+    // });
   }
 
   logout(){

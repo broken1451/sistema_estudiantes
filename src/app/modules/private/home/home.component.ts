@@ -6,6 +6,7 @@ import 'moment/locale/es';
 import { OptLogin } from '../../public/interfaces/login.interface';
 import { RegisterUser, UpdatedUser } from '../../public/interfaces/register.user..interface';
 import Swal from 'sweetalert2';
+import { Subscription } from 'rxjs';
 moment.locale('es');
 
 @Component({
@@ -29,6 +30,7 @@ export class HomeComponent implements OnInit {
   public termino: string = '';
   public selectedUser = null;
   public userDetail!: User;
+  public user$: Subscription;
 
   constructor() {
     this.userLogged = JSON.parse(localStorage.getItem('usuario')!);
@@ -55,10 +57,10 @@ export class HomeComponent implements OnInit {
 
   ngOnInit(): void {
     this.getUser(String(this.desde));
-    this.user = JSON.parse(localStorage.getItem('usuario')!);
+    this.user = JSON.parse(localStorage.getItem('userLoged')!);
   }
 
-  async getUser(desde?: string) {
+  async getUser(desde?: string): Promise<any> {
     const resp = await this.userService
       .getUsers(Number(desde)).then((res)=> {
         this.usersBack = res?.users!;
@@ -68,12 +70,20 @@ export class HomeComponent implements OnInit {
           element.created = m.fromNow();
           element.updated = mup.fromNow();
         });
+        const userloged = JSON.parse(localStorage.getItem('userLoged')!)
+        // console.log({userloged});
         this.auxUsersBack = Object.assign([], this.usersBack);
+        // console.log({auxUsersBack: this.auxUsersBack});
+        this.auxUsersBack.forEach((user)=> {
+          if (user._id == userloged._id) {
+            localStorage.setItem('userLoged', JSON.stringify(user));
+          }
+        })
       })
       .catch((err) => {
         console.log({err});
       });
-
+    return resp;
   }
 
   prev() {
@@ -91,8 +101,6 @@ export class HomeComponent implements OnInit {
   next() {
     this.desde = this.desde + 1;
     this.getUser(String(this.desde));
-    console.log(this.desde);
-    console.log(this.usersBack);
   }
 
   delete(user: User) {
@@ -151,7 +159,6 @@ export class HomeComponent implements OnInit {
 
 
   detail(user: User){
-    console.log({user});
     this.userDetail = user;
   }
 
@@ -207,9 +214,16 @@ export class HomeComponent implements OnInit {
           didOpen: () => {
             Swal.showLoading();
           },
-        }).then((result) => {
+        }).then(async (result) => {
           if (result.dismiss === Swal.DismissReason.timer) {
             this.getUser(String(this.desde));
+            // const userloged = JSON.parse(localStorage.getItem('userLoged')!)
+            // console.log({userloged});
+            // this.usersBack.forEach((user) => {
+            //   console.log({user});
+              // if (user._id) {
+              // }
+            // })
           }
         });
       })

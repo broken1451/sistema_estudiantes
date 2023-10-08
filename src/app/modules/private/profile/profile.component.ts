@@ -5,6 +5,9 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { UpdatedUser } from '../../public/interfaces/register.user..interface';
 import { DecimalPipe } from '@angular/common';
 import Swal from 'sweetalert2';
+import { Subscription } from 'rxjs';
+import { Router } from '@angular/router';
+import { ChangeDetectorRef } from '@angular/core';
 
 @Component({
   selector: 'app-profile',
@@ -15,10 +18,17 @@ export class ProfileComponent implements OnInit {
 
 
   public usuario!: User;
-  public readonly userService = inject(AuthService);
+  // public readonly userService = inject(AuthService);
+  
+  public readonly ChangeDetectorRef = inject(ChangeDetectorRef);
+  public readonly router = inject(Router);
   private readonly fb = inject(FormBuilder);
   private readonly decimalPipe = inject(DecimalPipe);
   public validRut = false;
+  public imagenSubir: File;
+  public imagenSubirTemp: any;
+  public user$: Subscription;
+
 
   public form: FormGroup = this.fb.group({
     name: ['', [Validators.required]],
@@ -35,9 +45,23 @@ export class ProfileComponent implements OnInit {
     return this.form.controls;
   }
 
-  constructor() {}
+  constructor(private userService:AuthService) {}
 
-  ngOnInit(): void {
+  async ngOnInit(): Promise<any> {
+    if (localStorage.getItem('userLoged')) {
+      this.user$ = this.userService.itemsObservable$.subscribe((data) => {
+        console.log({data});
+        // data.img
+        this.usuario = data;
+        localStorage.setItem('userLoged', JSON.stringify(this.usuario));
+        localStorage.setItem('usuario', JSON.stringify(this.usuario));
+        // localStorage.removeItem('userLoged')
+        // localStorage.setItem('userLoged', JSON.stringify(data))
+        // this.usuario = JSON.parse(localStorage.getItem('userLoged')!);
+      });
+    } else {
+      this.usuario = null;
+    }
     this.usuario = JSON.parse(localStorage.getItem('userLoged')!);
     this.form.controls['name'].setValue(this.usuario.name);
     this.form.controls['username'].setValue(this.usuario.username);
@@ -220,4 +244,67 @@ export class ProfileComponent implements OnInit {
     }
   }
 
+
+
+  seleccionImage(archivo: any) {
+    try {
+      if (!archivo.files[0]) {
+        this.imagenSubir = null;
+        return;
+      }
+      if (archivo.files[0].type.indexOf('image') < 0) {
+        Swal.fire(
+          'Solo se permiten imagenes',
+          'El archivo seleccionado no es una imagen',
+          'error'
+        );
+        this.imagenSubir = null;
+        return;
+      }
+      // si recibimmos un archivo
+      this.imagenSubir = archivo.files[0];
+      // this.onFileSelected(this.imagenSubir)
+      // console.log({formData: this.imagenSubir});
+      // Cargar imagen temporal
+      const reader = new FileReader();
+      const urlImagenTemp = reader.readAsDataURL(archivo.files[0]);
+      reader.onloadend = () => {
+        this.imagenSubirTemp = reader.result;
+        // console.log(reader.result);
+      };
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  cambiarImagen() {
+    if (this.imagenSubir) {
+      console.log(this.imagenSubir);
+      this.userService.cambiarImagen( this.imagenSubir, this.usuario._id);
+      this.ChangeDetectorRef.detectChanges()
+      setTimeout(() => {
+        this.imagenSubirTemp = null;
+        this.imagenSubir = null;
+        // window.location.reload();
+        // this.ChangeDetectorRef.detectChanges()
+        // this.router.navigate(['/private/home'])
+      }, 800);
+      this.actualizarData();
+    }
+  }
+
+
+
+  actualizarData(){
+    this.user$ = this.userService.itemsObservable$.subscribe((data) => {
+      console.log({data});
+      // data.img
+      this.usuario = data;
+      localStorage.setItem('userLoged', JSON.stringify(this.usuario));
+      localStorage.setItem('usuario', JSON.stringify(this.usuario));
+      // localStorage.removeItem('userLoged')
+      // localStorage.setItem('userLoged', JSON.stringify(data))
+      // this.usuario = JSON.parse(localStorage.getItem('userLoged')!);
+    });
+  }
 }

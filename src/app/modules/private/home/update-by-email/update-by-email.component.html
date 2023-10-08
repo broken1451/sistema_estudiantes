@@ -39,10 +39,36 @@
 
             </div>
         </div>
-        <!-- <div class="col-md-12 m-b-20">
-            <div class="fileupload btn btn-danger btn-rounded waves-effect waves-light"><span><i
-                        class="ion-upload m-r-5"></i>Upload Contact Image</span>
-                <input type="file" class="upload">
+<!-- 
+        <div class="col-md-12 m-b-20">
+            <div class="mdc-layout-grid__cell--span-4 mdc-layout-grid__cell--span-6-desktop stretch-card">
+                
+                <div class="fileupload btn btn-danger btn-rounded waves-effect waves-light"><span><i
+                            class="ion-upload m-r-5"></i>Upload Contact Image</span>
+                    <input (change)="seleccionImage($event.target)"   type="file" class="upload" id="customFile">
+                </div>
+                <br>
+                <br>
+                <img  [src]="user.img | imagen" style="width: 100px; height: 100px;" class="rounded float-left">
+                <img  *ngIf="imagenSubirTemp" [src]="imagenSubirTemp" style="margin-left: 4%; width: 100px; height: 100px;" class="rounded float-left">
+
+
+                <br>
+                <br>
+                <p style="margin-top: 14%;">Progreso de carga</p>
+                <div class="progress progress-xs margin-vertical-10 ">
+                    <div class="progress-bar bg-danger"></div>
+                </div>
+                <div class="progress progress-xs margin-vertical-10 ">
+                  <div class="progress-bar bg-danger"    id="barraProgreso"
+                  #barraProgreso role="progressbar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax=""></div>
+                </div>
+
+                <div class="custom-file mt-4">
+                    <input  class="custom-file-input" id="customFile">
+                    <label class="custom-file-label" for="customFile">Eliga una imagen</label>
+                  </div>
+
             </div>
         </div> -->
     </div>

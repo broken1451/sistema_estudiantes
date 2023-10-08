@@ -1,12 +1,14 @@
 import {
   Component,
   DoCheck,
+  ElementRef,
   EventEmitter,
   Input,
   OnChanges,
   OnInit,
   Output,
   SimpleChanges,
+  ViewChild,
   inject,
 } from '@angular/core';
 import {
@@ -34,6 +36,12 @@ export class UpdateByEmailComponent implements OnInit, OnChanges {
   private readonly authService = inject(AuthService);
   private fb = inject(FormBuilder);
   @Input() user!: User;
+  public imagenSubirTemp: any;
+  public imagenSubir!: File;
+  public loading: any;
+  public cont: any;
+
+  @ViewChild('customFile', { static: true }) customFile!: ElementRef;
 
   public formOptions: AbstractControlOptions = {
     validators: [this.sonIguales('password', 'password2')],
@@ -50,6 +58,7 @@ export class UpdateByEmailComponent implements OnInit, OnChanges {
     this.form = this.fb.group({
       name: [this.authService.userToUpdate?.name, [Validators.required]],
       email: [this.authService.userToUpdate?.email, [Validators.pattern(/^([a-zA-Z0-9_\.-]+)@([a-zA-Z0-9_\.-]+)\.([a-zA-Z]{2,5})$/)]],
+      // img: [this.authService.userToUpdate?.img, []],
       check1: [this.setValueAdm(this.authService.userToUpdate?.roles)],
       check2: [this.setValueDocente(this.authService.userToUpdate?.roles)],
       check3: [this.setValueEstudiante(this.authService.userToUpdate?.roles)],
@@ -97,10 +106,7 @@ export class UpdateByEmailComponent implements OnInit, OnChanges {
       {
         name: [changes['user'].currentValue?.name, [Validators.required]],
         email: [changes['user'].currentValue?.email, [Validators.pattern(/^([a-zA-Z0-9_\.-]+)@([a-zA-Z0-9_\.-]+)\.([a-zA-Z]{2,5})$/)]],
-        // check1: [this.isAdmin],
-        // check2: [this.isDocente],
-        // check3: [this.isEstudiante],
-        // check4: [this.isParents],
+        // img: [changes['user'].currentValue?.img, []],
         check1: [this.setValueAdm(changes['user'].currentValue?.roles)],
         check2: [this.setValueDocente(changes['user'].currentValue?.roles)],
         check3: [this.setValueEstudiante(changes['user'].currentValue?.roles)],
@@ -299,15 +305,18 @@ export class UpdateByEmailComponent implements OnInit, OnChanges {
     const updatedUser: UpdatedUser = {
       name: this.formsValue['name'].value,
       email: this.formsValue['email'].value,
+      // img: this.formsValue['img'].value,
       // password: this.formsValue['password'].value,
       roles,
     };
 
     // console.log({ updatedUser });
 
-    this.formValueEmail.emit({updatedUser, id:this.user._id});
-    // this.form.reset();
+    // this.cambiarImagen()
     $('#updateUser').modal('hide');
+    this.formValueEmail.emit({updatedUser, id:this.user._id});
+    this.setDefaultEmail.emit(false)
+    // this.form.reset();
   }
 
   sonIguales(campo1: string, campo2: string): any {
@@ -331,6 +340,7 @@ export class UpdateByEmailComponent implements OnInit, OnChanges {
       {
         name: [this.user.name, [Validators.required]],
         email: [this.user?.email, [Validators.pattern(/^([a-zA-Z0-9_\.-]+)@([a-zA-Z0-9_\.-]+)\.([a-zA-Z]{2,5})$/)]],
+        // img: [this.user?.img, []],
         // check1: [this.isAdmin],
         // check2: [this.isDocente],
         // check3: [this.isEstudiante],
@@ -344,5 +354,66 @@ export class UpdateByEmailComponent implements OnInit, OnChanges {
     );
     this.setDefaultEmail.emit(false)
     $('#updateUser').modal('hide');
+  }
+  
+
+
+  seleccionImage(archivo: any) {
+    const file = archivo.files[0]
+    if (!file) {
+      this.imagenSubir = null;
+      return;
+    }
+    if (file.type.indexOf('image') < 0) {
+      Swal.fire(
+        'Solo se permiten imagenes',
+        'El archivo seleccionado no es una imagen',
+        'error'
+      );
+      this.imagenSubir = null;
+      return;
+    }
+
+    this.imagenSubir = file;
+    // Cargar imagen temporal
+    const reader = new FileReader();
+    const urlImagenTemp = reader.readAsDataURL(file);
+    reader.onloadend = () => {
+      this.imagenSubirTemp = reader.result;
+      console.log(reader.result);
+    };
+  }
+
+  cambiarImagen() {
+    // this.loading = true;
+    
+    const interval = setInterval(() => {
+      // console.log('cambia imagen');
+      this.loading = true;
+      if (this.cont < 100) {
+        this.cont = this.cont + 20;
+        let barra: any = document.getElementById('barraProgreso');
+        barra = barra.style.width = this.cont + '%';
+        console.log('cambia imagen', barra);
+        document.getElementById('barraProgreso').innerHTML = this.cont + '%';
+        if (this.cont >= 100) {
+          // this.otrosService.cambiarImagen(this.imagenSubir, this.otro._id);
+          $('#updateUser').modal('hide');
+          setTimeout(() => {
+            this.imagenSubirTemp = null;
+            this.imagenSubir = null;
+          }, 800);
+        }
+      }
+
+      if (this.cont === 100) {
+        clearInterval(interval);
+        this.cont = 0;
+        const barra: any = document.getElementById('barraProgreso');
+        barra.style.width = this.cont + '%';
+      }
+
+
+    },1000)
   }
 }

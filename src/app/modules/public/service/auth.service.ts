@@ -1,6 +1,6 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
-import { Observable, take } from 'rxjs';
+import { Observable, Subject, take } from 'rxjs';
 import {
   LoginRequest,
   LoginResponse,
@@ -11,6 +11,7 @@ import { environment } from 'src/environments/environment';
 import { Router } from '@angular/router';
 import { RegisterUser, UpdatedUser } from '../interfaces/register.user..interface';
 import { ResponseUsers, User } from '../interfaces/user.interfaces';
+import Swal from 'sweetalert2';
 
 @Injectable()
 export class AuthService {
@@ -36,9 +37,12 @@ export class AuthService {
   public username!: string;
   public token!: string;
   public usuario!: User | any;
+  public usuarioIMG!: User | any;
   public menu: any[]  = [];
   public userToUpdate!: User;
   public termino: string = '';
+  private userSubject = new Subject<any>();
+  public itemsObservable$ = this.userSubject.asObservable();
 
   constructor() {
     this.cargarStorage();
@@ -291,4 +295,89 @@ export class AuthService {
   cargarMenu() {
     this.menu = this.menu;
   }
+
+  cambiarImagen(archivo: any, id: string) {
+    this.subirArchivo(archivo,id).then((res: any)=>{
+      console.log(res);
+      this.usuario.img = res.user.img;
+      this.usuarioIMG = res.user.img;
+      // Resto del código
+      this.userSubject.next(this.usuario);
+      // localStorage.removeItem('userLoged');
+      localStorage.setItem('usuarioIMG', this.usuarioIMG);
+      // localStorage.setItem('usuario', JSON.stringify(this.usuario));
+      console.log('here');
+      // delete this.usuario.img
+      // this.usuario.img = '';
+      // this.usuario.img = res.user.img;
+      // // delete this.usuario.img
+      // // this.usuario.img = res.user.img;
+      // this.userSubject.next(this.usuario);
+      // localStorage.removeItem('userLoged');
+      // localStorage.setItem('userLoged', JSON.stringify(this.usuario));
+      // console.log('here');
+    }).catch((err) => {
+      console.log({err});
+    })
+    // const formData = new FormData();
+    // formData.append('file', archivo);
+    // console.log(formData);
+  }
+
+
+
+    // tslint:disable-next-line: max-line-length
+    subirArchivo(archivo: File, id: string) { // tipo de imagen es usuarios,medicos o hospitales , id del objeto a actualizar
+      return new Promise( (resolve, reject) => {
+  
+         const formData = new FormData(); // esto es todo el payload que quiero mandar a subir
+         const xhr = new XMLHttpRequest(); // inicializar la peticion ajax
+  
+         // Configuracion del formData
+         // formData.append('nombre q esta en el postman opcion fromdata para subir la imagens', archivo que quiero subir, nombre del archivo)
+         formData.append('file', archivo, archivo.name);
+  
+         // Configuracion de la peticion ajax
+         xhr.onreadystatechange = () => {
+             if (xhr.readyState === 4) {
+               if (xhr.status === 200) {
+                 // resolve('Imagen Subida exitosamente' mandar el response exitoso);
+                //  resolve(xhr.response);
+                resolve(JSON.parse(xhr.response));
+                console.log('Response ====>> ',  JSON.parse(xhr.response));
+                //  localStorage.setItem('userLoged', JSON.stringify(this.usuario));
+                 Swal.fire({
+                  title: '',
+                  text: 'Imagen subida al servidor exitosamente',
+                  confirmButtonColor: '#3085d6',
+                  cancelButtonColor: '#d33',
+                  icon: 'success',
+                  confirmButtonText: 'ok!',
+                });
+                 console.log('Imagen subida: ', xhr.response);
+               } else {
+                 // reject('Imagen Subida exitosamente' mandar el response exitoso);
+                 // reject(xhr.response);
+                 reject(JSON.parse(xhr.response));
+                 Swal.fire({
+                  title: '',
+                  text: 'Imagen no se pudo subir al servidor ',
+                  confirmButtonColor: '#3085d6',
+                  cancelButtonColor: '#d33',
+                  icon: 'warning',
+                  confirmButtonText: 'ok!',
+                });
+                 console.log('Error Imagen no subida: ', xhr.response);
+               }
+             }
+         };
+  
+         // Peticion al servicio
+         const url = `${environment.baseUrl}/auth/upload-image-user/${id}`;
+         // xhr.open('metodo', peticion de servicio, decidir si es asincrono o no);
+         xhr.open('PUT', url, true);
+        //  xhr.setRequestHeader('x-token', localStorage.getItem('token'));
+         xhr.send(formData);
+     });
+    }
 }

@@ -10,6 +10,7 @@ import { EmailFormComponent } from './login-form/email-form/email-form.component
 import { UserFormComponent } from './login-form/user-form/user-form.component';
 import { IdentityFormComponent } from './login-form/identity-form/identity-form.component';
 import { SharedModule } from 'src/app/shared/shared.module';
+import { PipeModule } from 'src/app/shared/pipes/pipes.module';
 
 
 @NgModule({
@@ -25,7 +26,8 @@ import { SharedModule } from 'src/app/shared/shared.module';
     LoginRoutingModule,
     ReactiveFormsModule,
     FormsModule,
-    SharedModule
+    SharedModule,
+    PipeModule
   ],
   providers: [AuthService, DecimalPipe],
 })

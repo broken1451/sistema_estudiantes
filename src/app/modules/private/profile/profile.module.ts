@@ -5,6 +5,7 @@ import { ProfileRoutingModule } from './profile-routing.module';
 import { ProfileComponent } from './profile.component';
 import { ReactiveFormsModule } from '@angular/forms';
 import { SharedModule } from 'src/app/shared/shared.module';
+import { PipeModule } from 'src/app/shared/pipes/pipes.module';
 
 
 @NgModule({
@@ -15,7 +16,8 @@ import { SharedModule } from 'src/app/shared/shared.module';
     CommonModule,
     ProfileRoutingModule,
     ReactiveFormsModule,
-    SharedModule
+    SharedModule,
+    PipeModule
   ],
   providers: [DecimalPipe]
 })
