@@ -17,10 +17,11 @@ export class HeaderComponent implements OnInit, DoCheck {
 
   constructor() {
     localStorage.removeItem('termino')
+    this.usuario = JSON.parse(localStorage.getItem('userLoged')!)
   }
 
   ngDoCheck(): void {
-    this.usuario =  JSON.parse(localStorage.getItem('userLoged')!)
+    // this.usuario =  JSON.parse(localStorage.getItem('userLoged')!)
   }
 
   ngOnInit(): void {

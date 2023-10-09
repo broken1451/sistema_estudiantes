@@ -1,6 +1,6 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Injectable, inject } from '@angular/core';
-import { Observable, Subject, take } from 'rxjs';
+import { Injectable, NgZone, inject } from '@angular/core';
+import { BehaviorSubject, Observable, Subject, take } from 'rxjs';
 import {
   LoginRequest,
   LoginResponse,
@@ -44,10 +44,17 @@ export class AuthService {
   private userSubject = new Subject<any>();
   public itemsObservable$ = this.userSubject.asObservable();
 
-  constructor() {
+  constructor(private ngZone: NgZone) {
+    this.usuario = JSON.parse(localStorage.getItem('userLoged')!);
     this.cargarStorage();
     this.cargarStorageCredentials();
     // this.cargarStorageUser();
+  }
+
+
+  getUserImage(imageName: string): Observable<Blob> {
+    const url = `${environment.baseUrl}/auth/userImage/${imageName}`;
+    return this.httpClient.get(url, { responseType: 'blob' });
   }
 
   login(body: LoginRequest): Promise<LoginResponse> {
@@ -208,7 +215,7 @@ export class AuthService {
   cargarStorage() {
     if (sessionStorage.getItem('token')) {
       console.log('hete');
-      this.usuario = JSON.parse(localStorage.getItem('usuario')!);
+      this.usuario = JSON.parse(localStorage.getItem('userLoged')!);
       this.menu = JSON.parse(localStorage.getItem('menu')!);
     } else {
       this.usuario = null;
@@ -299,14 +306,17 @@ export class AuthService {
   cambiarImagen(archivo: any, id: string) {
     this.subirArchivo(archivo,id).then((res: any)=>{
       console.log(res);
+      console.log('this.usuario ------>> ', this.usuario);
       this.usuario.img = res.user.img;
-      this.usuarioIMG = res.user.img;
-      // Resto del código
+      // this.usuarioIMG = res.user.img;
       this.userSubject.next(this.usuario);
+      localStorage.setItem('userLoged',JSON.stringify(this.usuario))
+      // this.updateData(this.usuario)
+      // Resto del código
       // localStorage.removeItem('userLoged');
-      localStorage.setItem('usuarioIMG', this.usuarioIMG);
+      // localStorage.setItem('usuarioIMG', this.usuarioIMG);
       // localStorage.setItem('usuario', JSON.stringify(this.usuario));
-      console.log('here');
+      // console.log('here');
       // delete this.usuario.img
       // this.usuario.img = '';
       // this.usuario.img = res.user.img;
@@ -349,10 +359,8 @@ export class AuthService {
                  Swal.fire({
                   title: '',
                   text: 'Imagen subida al servidor exitosamente',
-                  confirmButtonColor: '#3085d6',
-                  cancelButtonColor: '#d33',
-                  icon: 'success',
-                  confirmButtonText: 'ok!',
+                  timer: 2000,
+                  showConfirmButton: false
                 });
                  console.log('Imagen subida: ', xhr.response);
                } else {

@@ -1,4 +1,4 @@
-import { Component, DoCheck, OnChanges, OnInit, SimpleChanges, inject } from '@angular/core';
+import { ApplicationRef, ChangeDetectionStrategy, Component, DoCheck, NgZone, OnChanges, OnInit, SimpleChanges, inject } from '@angular/core';
 import { User } from '../../public/interfaces/login.interface';
 import { AuthService } from '../../public/service/auth.service';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
@@ -7,7 +7,8 @@ import { DecimalPipe } from '@angular/common';
 import Swal from 'sweetalert2';
 import { Subscription } from 'rxjs';
 import { Router } from '@angular/router';
-import { ChangeDetectorRef } from '@angular/core';
+import { ChangeDetectorRef,  } from '@angular/core';
+import { ImagenPipe } from '../../../shared/pipes/img-pipe.pipe';
 
 @Component({
   selector: 'app-profile',
@@ -23,11 +24,14 @@ export class ProfileComponent implements OnInit {
   public readonly ChangeDetectorRef = inject(ChangeDetectorRef);
   public readonly router = inject(Router);
   private readonly fb = inject(FormBuilder);
+  
+  private readonly imgPipe = inject(ImagenPipe);
   private readonly decimalPipe = inject(DecimalPipe);
   public validRut = false;
   public imagenSubir: File;
   public imagenSubirTemp: any;
   public user$: Subscription;
+  public imagenUrl: string;
 
 
   public form: FormGroup = this.fb.group({
@@ -45,28 +49,61 @@ export class ProfileComponent implements OnInit {
     return this.form.controls;
   }
 
-  constructor(private userService:AuthService) {}
+  constructor(private userService:AuthService, private appRef: ApplicationRef, private ngZone: NgZone, private cdRef: ChangeDetectorRef) {}
 
   async ngOnInit(): Promise<any> {
-    if (localStorage.getItem('userLoged')) {
-      this.user$ = this.userService.itemsObservable$.subscribe((data) => {
-        console.log({data});
-        // data.img
-        this.usuario = data;
-        localStorage.setItem('userLoged', JSON.stringify(this.usuario));
-        localStorage.setItem('usuario', JSON.stringify(this.usuario));
-        // localStorage.removeItem('userLoged')
-        // localStorage.setItem('userLoged', JSON.stringify(data))
-        // this.usuario = JSON.parse(localStorage.getItem('userLoged')!);
-      });
-    } else {
-      this.usuario = null;
-    }
     this.usuario = JSON.parse(localStorage.getItem('userLoged')!);
     this.form.controls['name'].setValue(this.usuario.name);
     this.form.controls['username'].setValue(this.usuario.username);
     this.form.controls['nro_identity'].setValue(this.usuario.nro_identity);
     this.form.controls['email'].setValue(this.usuario.email);
+    if (localStorage.getItem('userLoged')) {
+
+      this.user$ = this.userService.itemsObservable$.subscribe({
+        next: (data) => {
+          console.log(data);
+
+          this.userService.getUserImage(data.img).subscribe(
+            (blobData) => {
+              // Handle the received blob data, e.g., display the image
+              const imageUrl = URL.createObjectURL(blobData).split('/')[3];
+              console.log({imageUrl});
+              this.usuario.img = data.img
+              // Use imageUrl to display the image in your template
+            },
+            (error) => {
+              // Handle errors if any
+            }
+          );
+
+        },
+        error: (err) => {
+          console.error(err);
+        },
+        complete: () => {
+          console.info('Success login.');
+        },
+      });
+
+      // this.user$ = this.userService.itemsObservable$.subscribe((data) => {
+      //   console.log(data);
+      //   // console.log({data: data.img});
+      //   // data.img
+      //   this.usuario = data;
+      //   // // this.imagenUrl = this.imgPipe.transform(data.img);
+      //   // this.imagenUrl = data.img
+      //   // localStorage.setItem('userLoged', JSON.stringify(this.usuario));
+      //   // localStorage.setItem('usuario', JSON.stringify(this.usuario));
+      //   // localStorage.removeItem('userLoged')
+      //   // localStorage.setItem('userLoged', JSON.stringify(data))
+      //   // this.usuario = JSON.parse(localStorage.getItem('userLoged')!);
+      //   // this.appRef.tick();
+      //   this.appRef.tick();
+      //   this.cdRef.detectChanges();
+      // });
+    } else {
+      this.usuario = null;
+    }
   }
 
   async onSubmit() {
@@ -280,31 +317,33 @@ export class ProfileComponent implements OnInit {
   cambiarImagen() {
     if (this.imagenSubir) {
       console.log(this.imagenSubir);
-      this.userService.cambiarImagen( this.imagenSubir, this.usuario._id);
-      this.ChangeDetectorRef.detectChanges()
+      this.userService.cambiarImagen(this.imagenSubir, this.usuario._id);
+      // this.ChangeDetectorRef.detectChanges()
       setTimeout(() => {
         this.imagenSubirTemp = null;
         this.imagenSubir = null;
-        // window.location.reload();
+
+        // this.ngZone.run(() => {
+
+        //   this.user$ = this.userService.itemsObservable$.subscribe((data) => {
+        //     console.log({data});
+        //     // data.img
+        //     this.usuario = data;
+        //     // localStorage.setItem('userLoged', JSON.stringify(this.usuario));
+        //     // localStorage.setItem('usuario', JSON.stringify(this.usuario));
+        //     // localStorage.removeItem('userLoged')
+        //     // localStorage.setItem('userLoged', JSON.stringify(data))
+        //     // this.usuario = JSON.parse(localStorage.getItem('userLoged')!);
+        //     // this.appRef.tick();
+        //   });
+        //   this.appRef.tick();
+        // })
+
         // this.ChangeDetectorRef.detectChanges()
-        // this.router.navigate(['/private/home'])
+        this.router.navigate(['/private/home']);
+        window.location.reload();
       }, 800);
-      this.actualizarData();
     }
   }
 
-
-
-  actualizarData(){
-    this.user$ = this.userService.itemsObservable$.subscribe((data) => {
-      console.log({data});
-      // data.img
-      this.usuario = data;
-      localStorage.setItem('userLoged', JSON.stringify(this.usuario));
-      localStorage.setItem('usuario', JSON.stringify(this.usuario));
-      // localStorage.removeItem('userLoged')
-      // localStorage.setItem('userLoged', JSON.stringify(data))
-      // this.usuario = JSON.parse(localStorage.getItem('userLoged')!);
-    });
-  }
 }

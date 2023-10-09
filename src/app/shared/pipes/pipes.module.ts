@@ -11,6 +11,7 @@ import { FormatRutPipe } from './format.pipe';
   imports: [
     CommonModule
   ],
+  providers: [ImagenPipe],
   exports: [ImagenPipe, FormatRutPipe]
 })
 export class PipeModule { }

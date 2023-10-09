@@ -8,6 +8,7 @@ import { HeaderComponent } from './header/header.component';
 import { SidebarComponent } from './sidebar/sidebar.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { PipeModule } from './pipes/pipes.module';
+import { ImagenPipe } from './pipes/img-pipe.pipe';
 
 
 @NgModule({

@@ -6,6 +6,7 @@ import { ProfileComponent } from './profile.component';
 import { ReactiveFormsModule } from '@angular/forms';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { PipeModule } from 'src/app/shared/pipes/pipes.module';
+import { ImagenPipe } from 'src/app/shared/pipes/img-pipe.pipe';
 
 
 @NgModule({
@@ -19,6 +20,6 @@ import { PipeModule } from 'src/app/shared/pipes/pipes.module';
     SharedModule,
     PipeModule
   ],
-  providers: [DecimalPipe]
+  providers: [DecimalPipe, ImagenPipe]
 })
 export class ProfileModule { }
